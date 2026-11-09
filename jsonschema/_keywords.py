@@ -283,9 +283,12 @@ def dynamicRef(validator, dynamicRef, instance, schema):
 def type(validator, types, instance, schema):
     types = ensure_list(types)
 
-    if not any(validator.is_type(instance, type) for type in types):
-        reprs = ", ".join(repr(type) for type in types)
-        yield ValidationError(f"{instance!r} is not of type {reprs}")
+    for type in types:
+        if validator.is_type(instance, type):
+            return
+
+    reprs = ", ".join(repr(type) for type in types)
+    yield ValidationError(f"{instance!r} is not of type {reprs}")
 
 
 def properties(validator, properties, instance, schema):
